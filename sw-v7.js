@@ -1,4 +1,3 @@
-
 // sw-v7.js
 const CACHE = 'bta-cache-v7';
 const ASSETS = ['./','./index.html?v=7','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png'];
