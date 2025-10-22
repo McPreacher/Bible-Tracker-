@@ -162,7 +162,9 @@ $("import").onchange=async (e)=>{ const f=e.target.files&&e.target.files[0]; if(
 $("reset").onclick=()=>{ if(!confirm("Reset all checkboxes?")) return; for(const it of plan) it.done=false; save(); render(); };
 if(localStorage.getItem(PREF_MODE)==="dark"){ document.body.dataset.mode="dark"; $("toggleMode").textContent="Switch to Light Mode"; }
 render(); applyThemeChrome();
-if("serviceWorker" in navigator){ window.addEventListener("load", ()=>{ navigator.serviceWorker.register("./sw.js"); }); }
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw-v6.js"); }); }
 </script>
 </body>
 </html>
