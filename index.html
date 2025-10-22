@@ -1,187 +1,168 @@
 <!DOCTYPE html>
-<html lang="en" data-mode="light" data-theme="emerald">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bible Tracker App</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<meta name="theme-color" content="#10b981">
-<title>Bible Tracker App</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#10B981">
 <style>
-  :root { --bg0:#f7f8fb; --bg1:#ffffff; --ink:#0f172a; --muted:#64748b; --ring:#e2e8f0;
-          --card:#ffffff; --shadow:0 1px 2px rgba(0,0,0,.04); --accent:#10b981; --accent-ink:#ffffff; --link:#059669; }
-  html[data-theme="indigo"] { --accent:#6366f1; --link:#4f46e5; }
-  html[data-theme="rose"]   { --accent:#f43f5e; --link:#e11d48; }
-  html[data-mode="dark"]    { --bg0:#0b1220; --bg1:#0b1220; --ink:#e5e7eb; --muted:#94a3b8; --ring:#1f2937; --card:#0b1220; --shadow:0 1px 2px rgba(0,0,0,.2); }
-  * { box-sizing:border-box; } body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background:var(--bg0); color:var(--ink); }
-  header { position:sticky; top:0; background: rgba(255,255,255,.86); border-bottom:1px solid var(--ring); backdrop-filter: saturate(1.2) blur(8px); }
-  html[data-mode="dark"] header { background: rgba(11,18,32,.86); }
-  .wrap { max-width:1040px; margin:0 auto; padding:16px; } h1 { margin:6px 0 2px; font-size: clamp(20px, 3vw, 28px); }
-  .muted { color:var(--muted); font-size:14px; } .controls { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; align-items:center; }
-  select, button, input { font: inherit; } .select, .btn, .pill, input[type="search"] { border:1px solid var(--ring); background:var(--bg1); color:var(--ink); }
-  .btn { padding:8px 12px; border-radius:999px; cursor:pointer; } .pill { border-radius:999px; padding:6px 10px; font-size:12px; }
-  .select { border-radius:12px; padding:6px 10px; } input[type="search"] { border-radius:12px; padding:8px 12px; flex:1; min-width:220px; }
-  .row{display:flex;gap:10px;align-items:center;} .bar{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden;}
-  html[data-mode="dark"] .bar{background:#111827;} .bar>span{display:block;height:100%;background: var(--accent); width:0; transition: width .3s ease;}
-  main .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
-  .card{background:var(--card);border:1px solid var(--ring);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);}
-  .card.done{opacity:.6;} .grow{flex:1;line-height:1.35;} .strike{text-decoration:line-through;color:var(--muted);}
-  a.link{color:var(--link);text-decoration:none;} a.link:hover{text-decoration:underline;} .k{font-size:12px;color:var(--muted);}
-  .hidden-input{position:absolute;opacity:0;width:0;height:0;} .footer{text-align:center;color:var(--muted);font-size:12px;padding:18px 0 28px;}
+  :root { --bg0:#f7f8fb; --bg1:#ffffff; --ink:#0f172a; --muted:#64748b; --ring:#e2e8f0; --card:#ffffff; --shadow:0 1px 2px rgba(0,0,0,.05);
+          --emerald:#10B981; --indigo:#6366F1; --rose:#F43F5E; }
+  [data-mode="dark"] { --bg0:#0b1220; --bg1:#0b1220; --ink:#e5e7eb; --muted:#9aa6b2; --ring:#1f2937; --card:#0b1220; --shadow:0 1px 2px rgba(0,0,0,.2); }
+  *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg0);color:var(--ink)}
+  header{position:sticky;top:0;z-index:50;border-bottom:1px solid transparent;color:#fff}
+  .wrap{max-width:1040px;margin:0 auto;padding:16px}
+  h1{margin:4px 0 0;font-size:clamp(20px,3vw,28px)}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+  .pill{display:flex;align-items:center;gap:8px;border:1px solid var(--ring);border-radius:999px;padding:8px 12px;background:var(--bg1)}
+  select{background:transparent;border:none;font:inherit;color:inherit}
+  .btn{padding:8px 12px;border:1px solid var(--ring);border-radius:999px;background:var(--bg1);cursor:pointer}
+  .bar{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+  [data-mode="dark"] .bar{background:#111827}
+  .bar>span{display:block;height:100%;transition:width .3s ease}
+  main .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:16px;padding:14px;box-shadow:var(--shadow);cursor:pointer;transition:box-shadow .2s,transform .02s}
+  .card:active{transform:scale(.995)} .card.done{opacity:.6}
+  .k{font-size:12px;color:var(--muted)} .title{font-weight:600}
+  .footer{text-align:center;color:var(--muted);font-size:12px;padding:18px 0 28px}
+  .menu{position:relative} .menu-list{position:absolute;right:0;margin-top:8px;width:180px;border:1px solid var(--ring);border-radius:12px;background:var(--bg1);box-shadow:var(--shadow);overflow:hidden;z-index:100}
+  .menu-list button,.menu-list label{display:block;width:100%;text-align:left;padding:8px 10px;border:0;background:transparent;font:inherit;color:inherit;cursor:pointer}
+  .menu-sep{height:1px;background:var(--ring);margin:4px 0}
+  .hidden-input{position:absolute;opacity:0;width:0;height:0}
+  .badge{border:1px solid; border-radius:999px; padding:6px 10px}
+  .header-line{display:flex;justify-content:space-between;align-items:center}
+  .progress-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-top:4px}
+  .filter-row{display:grid;grid-template-columns:1fr 2fr;gap:12px}
+  @media (min-width: 768px){ .filter-row{grid-template-columns:1fr 2fr} }
+  .section-header{grid-column:1/-1;border:1px solid var(--ring);border-radius:16px;padding:10px 12px;background:var(--bg1);display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:var(--shadow)}
 </style>
 </head>
-<body>
-<header>
+<body data-mode="light" data-theme="emerald">
+<header id="appHeader" style="background:#10B981;transform:translateZ(0)">
   <div class="wrap">
-    <h1>Bible Tracker App</h1>
-    <div class="muted">Whole Bible • Free selection • Progress saved locally</div>
-
-    <div class="controls">
-      <label class="pill">Scope
-        <select id="scope" class="select" style="margin-left:6px">
-          <option value="All">All</option>
-          <option value="OT">Old Testament</option>
-          <option value="NT">New Testament</option>
-        </select>
-      </label>
-
-      <label class="pill">Book
-        <select id="jump" class="select" style="margin-left:6px">
-          <option value="All">All</option>
-        </select>
-      </label>
-
-      <input id="q" type="search" placeholder="Search: John 3, 'Genesis', or a chapter number…">
-
-      <div class="pill">Theme
-        <select id="theme" class="select" style="margin-left:6px">
-          <option value="emerald">Emerald</option>
-          <option value="indigo">Indigo</option>
-          <option value="rose">Rose</option>
-        </select>
+    <div class="header-line">
+      <h1 style="color:#fff">Bible Tracker App</h1>
+      <div class="controls">
+        <div class="pill"><span class="k">Scope</span>
+          <select id="scope">
+            <option>All</option><option>OT</option><option>NT</option>
+          </select>
+        </div>
+        <div class="pill badge" id="themeBadge"><span class="k">Theme</span>
+          <select id="theme">
+            <option value="emerald">Emerald</option>
+            <option value="indigo">Indigo</option>
+            <option value="rose">Rose</option>
+          </select>
+        </div>
+        <div class="pill"><span class="k">Translation</span>
+          <select id="translation">
+            <option>ESV</option><option>CSB</option><option>NIV</option><option>KJV</option><option>NASB</option>
+          </select>
+        </div>
+        <div class="menu" id="moreWrap">
+          <button class="btn" id="more">⋯</button>
+          <div class="menu-list" id="menu" hidden>
+            <button id="toggleMode">Switch to Dark Mode</button>
+            <div class="menu-sep"></div>
+            <button id="export">Export</button>
+            <label>Import
+              <input id="import" type="file" accept=".json" class="hidden-input">
+            </label>
+            <div class="menu-sep"></div>
+            <button id="reset" style="color:#b91c1c">Reset</button>
+          </div>
+        </div>
       </div>
-
-      <div class="pill">Translation
-        <select id="translation" class="select" style="margin-left:6px">
-          <option value="ESV">ESV</option>
-          <option value="CSB">CSB</option>
-          <option value="NIV">NIV</option>
-          <option value="KJV">KJV</option>
-          <option value="NASB">NASB</option>
-        </select>
-      </div>
-
-      <button id="mode" class="btn">🌙 Dark</button>
-      <button id="export" class="btn">Export</button>
-      <label class="btn">Import<input id="import" type="file" accept=".json" class="hidden-input"></label>
-      <button id="reset" class="btn">Reset</button>
     </div>
-
-    <div class="row" style="margin-top:10px">
-      <div class="bar" style="flex:1"><span id="progress"></span></div>
-      <div class="muted" id="pct" style="min-width:220px;text-align:right">0% • 0 / 1189 • ESV • All</div>
+    <div class="bar"><span id="progress" style="background:#10B981;width:0%"></span></div>
+    <div class="progress-row">
+      <span id="completed">0 / 1189 completed</span>
+      <span id="meta">0% • ESV • All</span>
     </div>
   </div>
 </header>
 
 <main class="wrap">
-  <div id="list" class="grid" aria-live="polite"></div>
-  <div class="footer">PWA • Works offline • Use Safari → Add to Home Screen</div>
+  <div class="card">
+    <div class="title" style="margin-bottom:10px">Browse &amp; Filter</div>
+    <div class="filter-row">
+      <div class="flex">
+        <label class="k" for="book">Book</label>
+        <select id="book" style="width:100%;display:block;border:1px solid var(--ring);border-radius:8px;padding:8px;background:var(--bg1);color:var(--ink);margin-left:10px"></select>
+      </div>
+      <div class="flex">
+        <label class="k" for="q">Search</label>
+        <input id="q" placeholder="Try 'John 3' or a chapter number" style="width:100%;display:block;border:1px solid var(--ring);border-radius:8px;padding:8px;background:var(--bg1);color:var(--ink);margin-left:10px">
+      </div>
+    </div>
+    <div style="margin-top:10px"><button class="btn" id="showAll">Show All</button></div>
+  </div>
+
+  <div id="list" class="grid"></div>
+
+  <div class="footer">Bible Tracker App • v1.0.3</div>
 </main>
 
 <script>
 const OT_BOOKS = [["Genesis",50],["Exodus",40],["Leviticus",27],["Numbers",36],["Deuteronomy",34],["Joshua",24],["Judges",21],["Ruth",4],["1 Samuel",31],["2 Samuel",24],["1 Kings",22],["2 Kings",25],["1 Chronicles",29],["2 Chronicles",36],["Ezra",10],["Nehemiah",13],["Esther",10],["Job",42],["Psalms",150],["Proverbs",31],["Ecclesiastes",12],["Song of Songs",8],["Isaiah",66],["Jeremiah",52],["Lamentations",5],["Ezekiel",48],["Daniel",12],["Hosea",14],["Joel",3],["Amos",9],["Obadiah",1],["Jonah",4],["Micah",7],["Nahum",3],["Habakkuk",3],["Zephaniah",3],["Haggai",2],["Zechariah",14],["Malachi",4]];
 const NT_BOOKS = [["Matthew",28],["Mark",16],["Luke",24],["John",21],["Acts",28],["Romans",16],["1 Corinthians",16],["2 Corinthians",13],["Galatians",6],["Ephesians",6],["Philippians",4],["Colossians",4],["1 Thessalonians",5],["2 Thessalonians",3],["1 Timothy",6],["2 Timothy",4],["Titus",3],["Philemon",1],["Hebrews",13],["James",5],["1 Peter",5],["2 Peter",3],["1 John",5],["2 John",1],["3 John",1],["Jude",1],["Revelation",22]];
-
-const STORAGE_KEY = "bta_whole_v1";
-const PREF_MODE  = "bta_mode_v1";
-const PREF_THEME = "bta_theme_v1";
-const PREF_TRANS = "bta_translation_v1";
-const PREF_SCOPE = "bta_scope_v1";
-
-function buildWhole(){
-  const out=[]; let id=1;
-  for (const [book, chapters] of OT_BOOKS){ for (let c=1;c<=chapters;c++){ out.push({id, t:"OT", book, chapter:c, done:false}); id++; } }
-  for (const [book, chapters] of NT_BOOKS){ for (let c=1;c<=chapters;c++){ out.push({id, t:"NT", book, chapter:c, done:false}); id++; } }
+const PSALM_SECTIONS = [
+  {label:"Psalms 1–41", start:1, end:41},
+  {label:"Psalms 42–72", start:42, end:72},
+  {label:"Psalms 73–89", start:73, end:89},
+  {label:"Psalms 90–106", start:90, end:106},
+  {label:"Psalms 107–150", start:107, end:150},
+];
+function buildWhole(){ const out=[]; let id=1;
+  for(const [book,chapters] of OT_BOOKS){ for(let c=1;c<=chapters;c++){ out.push({id,t:"OT",book,chapter:c,passage:book+" "+c,done:false}); id++; } }
+  for(const [book,chapters] of NT_BOOKS){ for(let c=1;c<=chapters;c++){ out.push({id,t:"NT",book,chapter:c,passage:book+" "+c,done:false}); id++; } }
   return out;
 }
-let plan=null; try{ plan=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null"); }catch(e){ plan=null; }
-if(!Array.isArray(plan)||plan.length!==1189) plan=buildWhole();
-
-document.documentElement.dataset.mode  = localStorage.getItem(PREF_MODE)  || "light";
-document.documentElement.dataset.theme = localStorage.getItem(PREF_THEME) || "emerald";
-document.getElementById("theme").value = document.documentElement.dataset.theme;
-document.getElementById("translation").value = localStorage.getItem(PREF_TRANS) || "ESV";
-document.getElementById("scope").value = localStorage.getItem(PREF_SCOPE) || "All";
-
+const STORAGE_KEY="bta_whole_v3"; const PREF_MODE="bta_mode_v3"; const PREF_THEME="bta_theme_v3"; const PREF_TRANS="bta_translation_v3"; const PREF_SCOPE="bta_scope_v3"; const PREF_BOOK="bta_book_v3";
+let plan=null; try{ plan=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null"); }catch(e){ plan=null; } if(!Array.isArray(plan)||plan.length!==1189) plan=buildWhole();
+const $=id=>document.getElementById(id);
+document.body.dataset.mode=localStorage.getItem(PREF_MODE)||"light";
+document.body.dataset.theme=localStorage.getItem(PREF_THEME)||"emerald";
+$("theme").value=document.body.dataset.theme; $("translation").value=localStorage.getItem(PREF_TRANS)||"ESV"; $("scope").value=localStorage.getItem(PREF_SCOPE)||"All"; $("q").value="";
+let savedBook=localStorage.getItem(PREF_BOOK)||"All";
+function themeHex(){ switch(document.body.dataset.theme){ case "indigo":return "#6366F1"; case "rose":return "#F43F5E"; default:return "#10B981"; } }
+function applyThemeChrome(){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', themeHex());
+  $("appHeader").style.background=themeHex(); $("progress").style.background=themeHex();
+  const b=$("themeBadge"); const t=document.body.dataset.theme;
+  b.style.borderColor=(t==="indigo"?"#c7d2fe":t==="rose"?"#fecdd3":"#bbf7d0");
+  b.style.background=(document.body.dataset.mode==="dark")?"var(--bg1)":(t==="indigo"?"#eef2ff":t==="rose"?"#ffe4e6":"#ecfeff");
+}
+applyThemeChrome();
+function inScopeItems(){ const s=$("scope").value; return plan.filter(p=>s==="All"?true:p.t===s); }
+function computeProgress(){ const ins=inScopeItems(); const d=ins.filter(p=>p.done).length; const total=ins.length; const pct=Math.round(d/total*100)||0; $("progress").style.width=pct+"%"; $("completed").textContent=`${d} / ${total} completed`; $("meta").textContent=`${pct}% • ${$("translation").value} • ${$("scope").value}`; }
+function computeBooksGroups(){ const ins=inScopeItems(); const totals=new Map(), done=new Map(); for(const p of ins){ totals.set(p.book,(totals.get(p.book)||0)+1); if(p.done) done.set(p.book,(done.get(p.book)||0)+1); } const order=Array.from(new Set(ins.map(p=>p.book))); const remaining=[], completed=[]; for(const b of order){ const t=totals.get(b)||0, d=done.get(b)||0; if(t>0 && d===t) completed.push(b); else remaining.push(b);} return {remaining,completed}; }
+function makeCard(item){ const div=document.createElement("div"); div.className="card"+(item.done?" done":""); div.role="button"; div.tabIndex=0; div.onclick=()=>{item.done=!item.done; save(); render();}; div.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault(); item.done=!item.done; save(); render();}}; const top=document.createElement("div"); top.style.display="flex"; top.style.justifyContent="space-between"; top.style.alignItems="flex-start"; top.style.gap="8px"; const left=document.createElement("div"); const h=document.createElement("div"); h.className="title"; h.textContent=item.passage; const k=document.createElement("div"); k.className="k"; k.textContent=item.t==="OT"?"Old Testament":"New Testament"; left.appendChild(h); left.appendChild(k); const right=document.createElement("div"); if(item.done){ const mark=document.createElement("div"); mark.textContent="✓"; mark.style.fontWeight="700"; right.appendChild(mark);} const linkRow=document.createElement("div"); linkRow.className="k"; linkRow.style.marginTop="6px"; const a=document.createElement("a"); a.className="link"; a.href="https://www.biblegateway.com/passage/?search="+encodeURIComponent(item.passage)+"&version="+encodeURIComponent($("translation").value); a.target="_blank"; a.textContent="Read ("+$("translation").value+")"; a.onclick=e=>e.stopPropagation(); linkRow.appendChild(a); div.appendChild(top); top.appendChild(left); top.appendChild(right); div.appendChild(linkRow); return div;}
+function renderBooksDropdown(){ const sel=$("book"); sel.innerHTML=""; const optAll=document.createElement("option"); optAll.value="All"; optAll.textContent="All"; sel.appendChild(optAll); const {remaining,completed}=computeBooksGroups(); if(remaining.length){ const g=document.createElement("optgroup"); g.label="Books"; remaining.forEach(b=>{ const o=document.createElement("option"); o.value=b; o.textContent=b; g.appendChild(o); }); sel.appendChild(g);} if(completed.length){ const g=document.createElement("optgroup"); g.label="Completed"; completed.forEach(b=>{ const o=document.createElement("option"); o.value=b; o.textContent="✓ "+b; g.appendChild(o); }); sel.appendChild(g);} sel.value=savedBook; }
+function filteredItems(){ const scopeItems=inScopeItems(); const book=$("book").value; const q=$("q").value.trim().toLowerCase(); return scopeItems.filter(p=>{ const okBook=(book==="All"||p.book===book); const okQuery=!q||p.passage.toLowerCase().includes(q)||String(p.chapter).includes(q); return okBook&&okQuery; }); }
+function render(){ computeProgress(); renderBooksDropdown(); const list=$("list"); list.innerHTML=""; const items=filteredItems(); const book=$("book").value; const q=$("q").value.trim(); if(book==="Psalms" && q===""){ PSALM_SECTIONS.forEach((sec, idx)=>{ const head=document.createElement("div"); head.className="section-header"; const caret=document.createElement("span"); caret.className="k"; caret.textContent="▸"; const label=document.createElement("span"); label.className="title"; label.textContent=sec.label; head.appendChild(label); head.appendChild(caret); list.appendChild(head); let open=false; head.onclick=()=>{ open=!open; caret.textContent=open?'▾':'▸'; renderSection(idx, open); }; function renderSection(i, openNow){ [...list.querySelectorAll(`[data-sec="${i}"]`)].forEach(n=>n.remove()); if(!openNow) return; const secItems=items.filter(it=>it.book==='Psalms' && it.chapter>=sec.start && it.chapter<=sec.end); secItems.forEach(it=>{ const card=makeCard(it); card.setAttribute('data-sec', String(i)); list.appendChild(card); }); } }); } else { items.forEach(it=>list.appendChild(makeCard(it))); if(!items.length){ const empty=document.createElement('div'); empty.className='k'; empty.style.gridColumn='1/-1'; empty.style.textAlign='center'; empty.style.padding='16px 0'; empty.textContent='No results. Try clearing the search or changing the book.'; list.appendChild(empty);} } }
 function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(plan)); }
-function updateProgress(){
-  const scope=document.getElementById("scope").value;
-  const trans=document.getElementById("translation").value;
-  const inScope=plan.filter(p=>scope==="All" ? true : (p.t===scope));
-  const done=inScope.filter(p=>p.done).length;
-  const total=inScope.length;
-  const pct=Math.round(done/total*100)||0;
-  document.getElementById("progress").style.width = pct + "%";
-  document.getElementById("pct").textContent = pct + "% • " + done + " / " + total + " • " + trans + " • " + scope;
-}
-function makeCard(item){
-  const card=document.createElement("div"); card.className="card"; if(item.done) card.classList.add("done");
-  const chk=document.createElement("input"); chk.type="checkbox"; chk.checked=item.done;
-  const wrap=document.createElement("div"); wrap.className="grow";
-  const title=document.createElement("div"); title.innerHTML = "<strong>"+item.book+" "+item.chapter+"</strong>";
-  if(item.done) title.classList.add("strike");
-  const meta=document.createElement("div"); meta.className="k"; meta.textContent = item.t==="OT"?"Old Testament":"New Testament";
-  const right=document.createElement("div"); const a=document.createElement("a");
-  a.className="link k"; a.target="_blank"; a.textContent="Read";
-  const trans=document.getElementById("translation").value;
-  a.href="https://www.biblegateway.com/passage/?search="+encodeURIComponent(item.book+" "+item.chapter)+"&version="+encodeURIComponent(trans);
-  right.appendChild(a);
-  wrap.appendChild(title); wrap.appendChild(meta);
-  card.appendChild(chk); card.appendChild(wrap); card.appendChild(right);
-  chk.onchange=()=>{ item.done=chk.checked; save(); card.classList.toggle("done", item.done); title.classList.toggle("strike", item.done); updateProgress(); };
-  return card;
-}
-function render(){
-  const list=document.getElementById("list"); list.innerHTML="";
-  const q=document.getElementById("q").value.trim().toLowerCase();
-  const scope=document.getElementById("scope").value;
-  const bookFilter=document.getElementById("jump").value;
-  const frag=document.createDocumentFragment();
-  for(const it of plan){
-    if(scope!=="All" && it.t!==scope) continue;
-    if(bookFilter!=="All" && it.book!==bookFilter) continue;
-    if(q){
-      const label=(it.book+" "+it.chapter).toLowerCase();
-      const hit = label.includes(q) || it.book.toLowerCase().includes(q) || String(it.chapter).includes(q);
-      if(!hit) continue;
-    }
-    frag.appendChild(makeCard(it));
-  }
-  list.appendChild(frag);
-  updateProgress();
-}
-function renderBooks(){
-  const scope=document.getElementById("scope").value;
-  const jump=document.getElementById("jump"); jump.innerHTML="";
-  const optAll=document.createElement("option"); optAll.value="All"; optAll.textContent="All"; jump.appendChild(optAll);
-  const set=new Set();
-  for(const it of plan){ if(scope==="All"||it.t===scope) set.add(it.book); }
-  for(const b of Array.from(set)) { const o=document.createElement("option"); o.value=b; o.textContent=b; jump.appendChild(o); }
-}
-renderBooks(); render();
-
-document.getElementById("q").oninput=render;
-document.getElementById("scope").onchange=()=>{ localStorage.setItem(PREF_SCOPE, document.getElementById("scope").value); renderBooks(); render(); };
-document.getElementById("jump").onchange=render;
-document.getElementById("theme").onchange=()=>{ const v=document.getElementById("theme").value; document.documentElement.dataset.theme=v; localStorage.setItem(PREF_THEME, v); };
-document.getElementById("translation").onchange=()=>{ localStorage.setItem(PREF_TRANS, document.getElementById("translation").value); render(); };
-document.getElementById("mode").onclick=()=>{ const cur=document.documentElement.dataset.mode||"light"; const next=cur==="light"?"dark":"light"; document.documentElement.dataset.mode=next; localStorage.setItem(PREF_MODE, next); document.getElementById("mode").textContent = next==="dark"?"☀️ Light":"🌙 Dark"; };
-document.getElementById("reset").onclick=()=>{ if(!confirm("Reset all checkboxes?")) return; for(const it of plan) it.done=false; save(); render(); };
-document.getElementById("export").onclick=()=>{ const blob=new Blob([JSON.stringify({plan}, null, 2)], {type:"application/json"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="bible-reading-progress.json"; a.click(); URL.revokeObjectURL(url); };
-document.getElementById("import").onchange=async (e)=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; try{ const text=await f.text(); const data=JSON.parse(text); if(data.plan&&Array.isArray(data.plan)) plan=data.plan; save(); render(); }catch(err){ alert("Invalid file."); } finally { e.target.value=""; } };
-
-if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("./sw.js"); }); }
+$("scope").onchange=()=>{ localStorage.setItem(PREF_SCOPE,$("scope").value); window.scrollTo({top:0,behavior:'smooth'}); savedBook="All"; localStorage.setItem(PREF_BOOK,"All"); render(); };
+$("theme").onchange=()=>{ document.body.dataset.theme=$("theme").value; localStorage.setItem(PREF_THEME,$("theme").value); applyThemeChrome(); render(); };
+$("translation").onchange=()=>{ localStorage.setItem(PREF_TRANS,$("translation").value); render(); };
+$("book").onchange=()=>{ savedBook=$("book").value; localStorage.setItem(PREF_BOOK, savedBook); window.scrollTo({top:0,behavior:'smooth'}); render(); };
+$("q").oninput=()=>render();
+$("showAll").onclick=()=>{ $("book").value="All"; savedBook="All"; localStorage.setItem(PREF_BOOK,"All"); render(); };
+const menu=$("menu"), more=$("more"), moreWrap=$("moreWrap");
+more.onclick=(e)=>{ e.stopPropagation(); menu.hidden=!menu.hidden; };
+document.addEventListener("click",(e)=>{ if(!moreWrap.contains(e.target)) menu.hidden=true; });
+$("toggleMode").onclick=()=>{ document.body.dataset.mode=(document.body.dataset.mode==="dark"?"light":"dark"); localStorage.setItem(PREF_MODE, document.body.dataset.mode); $("toggleMode").textContent=document.body.dataset.mode==="dark"?"Switch to Light Mode":"Switch to Dark Mode"; applyThemeChrome(); };
+$("export").onclick=()=>{ const blob=new Blob([JSON.stringify({plan}, null, 2)], {type:"application/json"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="bible-reading-progress.json"; a.click(); URL.revokeObjectURL(url); };
+$("import").onchange=async (e)=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; try{ const text=await f.text(); const data=JSON.parse(text); if(data.plan&&Array.isArray(data.plan)){ plan=data.plan.map((p,i)=>({id:p.id??i+1,t:p.t||(/^(Matthew|Mark|Luke|John|Acts|Romans|1 Corinthians|2 Corinthians|Galatians|Ephesians|Philippians|Colossians|1 Thessalonians|2 Thessalonians|1 Timothy|2 Timothy|Titus|Philemon|Hebrews|James|1 Peter|2 Peter|1 John|2 John|3 John|Jude|Revelation)$/.test(p.book)?"NT":"OT"),book:p.book,chapter:p.chapter,passage:p.passage||p.book+' '+p.chapter,done:!!p.done})); save(); render(); } }catch(err){ alert("Invalid file."); } finally { e.target.value=""; } };
+$("reset").onclick=()=>{ if(!confirm("Reset all checkboxes?")) return; for(const it of plan) it.done=false; save(); render(); };
+if(localStorage.getItem(PREF_MODE)==="dark"){ document.body.dataset.mode="dark"; $("toggleMode").textContent="Switch to Light Mode"; }
+render(); applyThemeChrome();
+if("serviceWorker" in navigator){ window.addEventListener("load", ()=>{ navigator.serviceWorker.register("./sw.js"); }); }
 </script>
 </body>
 </html>
