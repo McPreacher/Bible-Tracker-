@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#10B981">
 <meta name="x-build" content="104">
 <style>
-  :root{--bg0:#f7f8fb;--bg1:#fff;--ink:#0f172a;--muted:#64748b;--ring:#e2e8f0;--card:#fff;--shadow:0 1px 2px rgba(0,0,0,.05);--emerald:#10B981;--indigo:#6366F1;--rose:#F43F5E}
+  :root{--bg0:#f7f8fb;--bg1:#fff;--ink:#0f172a;--muted:#64748b;--ring:#e2e8f0;--card:#fff;--shadow:0 1px 2px rgba(0,0,0,.05)}
   [data-mode=dark]{--bg0:#0b1220;--bg1:#0b1220;--ink:#e5e7eb;--muted:#9aa6b2;--ring:#1f2937;--card:#0b1220;--shadow:0 1px 2px rgba(0,0,0,.2)}
   *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg0);color:var(--ink)}
   header{position:sticky;top:0;z-index:50;border-bottom:1px solid transparent}
@@ -19,6 +19,7 @@
   h1{margin:4px 0 0;font-size:clamp(20px,3vw,28px);color:#fff}
   .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
   .pill{display:flex;align-items:center;gap:8px;border:1px solid var(--ring);border-radius:999px;padding:6px 10px;background:var(--bg1);font-weight:700;font-size:14px;color:var(--ink)}
+  [data-mode=dark] .pill{color:var(--ink)}
   select{background:transparent;border:none;font:inherit;color:inherit;font-weight:700}
   .btn{padding:6px 10px;border:1px solid var(--ring);border-radius:999px;background:var(--bg1);cursor:pointer;color:var(--ink)}
   .bar{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:8px}
@@ -42,7 +43,7 @@
 </style>
 </head>
 <body data-mode="light" data-theme="emerald">
-<header id="appHeader" style="background:#10B981;transform:translateZ(0)">
+<header id="appHeader" style="background:linear-gradient(135deg,#10B981 0%,#047857 55%,#064e3b 100%);transform:translateZ(0)">
   <div class="wrap">
     <div class="header-line">
       <h1>Bible Tracker App</h1>
@@ -62,6 +63,16 @@
                 <option value="emerald">Emerald</option>
                 <option value="indigo">Indigo</option>
                 <option value="rose">Rose</option>
+                <option value="red">Red</option>
+                <option value="sky">Sky</option>
+                <option value="amber">Amber</option>
+                <option value="violet">Violet</option>
+                <option value="teal">Teal</option>
+                <option value="slate">Slate</option>
+                <option value="gray">Gray</option>
+                <option value="zinc">Zinc</option>
+                <option value="neutral">Neutral</option>
+                <option value="stone">Stone</option>
               </select>
             </div>
             <div class="menu-sep"></div>
@@ -77,7 +88,7 @@
         </div>
       </div>
     </div>
-    <div class="bar"><span id="progress" style="background:#10B981;width:0%"></span></div>
+    <div class="bar"><span id="progress" style="background:#047857;width:0%"></span></div>
     <div class="progress-row">
       <span id="completed">0 / 1189 completed</span>
       <span id="meta">0% • ESV • All</span>
@@ -100,7 +111,7 @@
     <div style="margin-top:10px"><button class="btn" id="showAll">Show All</button></div>
   </div>
   <div id="list" class="grid"></div>
-  <div class="footer">Bible Tracker App • v1.0.3</div>
+  <div class="footer">Bible Tracker App • v1.0.4</div>
 </main>
 <script>
 const OT_BOOKS=[["Genesis",50],["Exodus",40],["Leviticus",27],["Numbers",36],["Deuteronomy",34],["Joshua",24],["Judges",21],["Ruth",4],["1 Samuel",31],["2 Samuel",24],["1 Kings",22],["2 Kings",25],["1 Chronicles",29],["2 Chronicles",36],["Ezra",10],["Nehemiah",13],["Esther",10],["Job",42],["Psalms",150],["Proverbs",31],["Ecclesiastes",12],["Song of Songs",8],["Isaiah",66],["Jeremiah",52],["Lamentations",5],["Ezekiel",48],["Daniel",12],["Hosea",14],["Joel",3],["Amos",9],["Obadiah",1],["Jonah",4],["Micah",7],["Nahum",3],["Habakkuk",3],["Zephaniah",3],["Haggai",2],["Zechariah",14],["Malachi",4]];
@@ -116,8 +127,9 @@ document.body.dataset.theme=localStorage.getItem(PREF_THEME)||"emerald";
 $("translation").value=localStorage.getItem(PREF_TRANS)||"ESV";
 $("scope").value=localStorage.getItem(PREF_SCOPE)||"All";
 $("q").value="";let savedBook=localStorage.getItem(PREF_BOOK)||"All";$("theme").value=document.body.dataset.theme;
-function themeHex(){switch(document.body.dataset.theme){case"indigo":return"#6366F1";case"rose":return"#F43F5E";default:return"#10B981";}}
-function applyThemeChrome(){document.querySelector('meta[name="theme-color"]').setAttribute('content',themeHex());$("appHeader").style.background=themeHex();$("progress").style.background=themeHex();}
+const themeHexMap={emerald:"#10B981",indigo:"#6366F1",rose:"#F43F5E",red:"#EF4444",sky:"#0EA5E9",amber:"#F59E0B",violet:"#8B5CF6",teal:"#14B8A6",slate:"#64748B",gray:"#6B7280",zinc:"#71717A",neutral:"#737373",stone:"#78716C"};
+const gradientMap={emerald:["#10B981","#047857","#064e3b"],indigo:["#6366F1","#4338CA","#312E81"],rose:["#F43F5E","#BE123C","#881337"],red:["#EF4444","#B91C1C","#7F1D1D"],sky:["#0EA5E9","#0369A1","#0C4A6E"],amber:["#F59E0B","#B45309","#78350F"],violet:["#8B5CF6","#6D28D9","#4C1D95"],teal:["#14B8A6","#0F766E","#115E59"],slate:["#64748B","#334155","#1F2937"],gray:["#6B7280","#374151","#111827"],zinc:["#71717A","#3F3F46","#18181B"],neutral:["#737373","#404040","#171717"],stone:["#78716C","#44403C","#1C1917"]};
+function applyThemeChrome(){const th=document.body.dataset.theme;const hex=themeHexMap[th]||themeHexMap.emerald;document.querySelector('meta[name="theme-color"]').setAttribute('content',hex);const [a,b,c]=gradientMap[th]||gradientMap.emerald;document.getElementById("appHeader").style.background=`linear-gradient(135deg, ${a} 0%, ${b} 55%, ${c} 100%)`;document.getElementById("progress").style.background=b;}
 applyThemeChrome();
 function inScopeItems(){const scope=$("scope").value;return plan.filter(p=>scope==="All"?true:p.t===scope);}
 function computeProgress(){const inScope=inScopeItems();const done=inScope.filter(p=>p.done).length;const total=inScope.length;const pct=Math.round(done/total*100)||0;$("progress").style.width=pct+"%";$("completed").textContent=`${done} / ${total} completed`;$("meta").textContent=`${pct}% • ${$("translation").value} • ${$("scope").value}`;}
@@ -136,13 +148,13 @@ const menu=$("menu"),more=$("more"),moreWrap=$("moreWrap"),themeSel=$("theme");
 more.onclick=e=>{e.stopPropagation();menu.hidden=!menu.hidden;};
 document.addEventListener("click",e=>{if(!moreWrap.contains(e.target))menu.hidden=true;});
 themeSel.onchange=()=>{document.body.dataset.theme=themeSel.value;localStorage.setItem(PREF_THEME,themeSel.value);applyThemeChrome();menu.hidden=true;};
-$("toggleMode").onclick=()=>{document.body.dataset.mode=document.body.dataset.mode==="dark"?"light":"dark";localStorage.setItem(PREF_MODE,document.body.dataset.mode);$("toggleMode").textContent=document.body.dataset.mode==="dark"?"Switch to Light Mode":"Switch to Dark Mode";applyThemeChrome();};
+$("toggleMode").onclick=()=>{document.body.dataset.mode=document.body.dataset.mode==="dark"?"light":"dark";localStorage.setItem(PREF_MODE,document.body.dataset.mode);$("toggleMode").textContent=document.body.dataset.mode==="dark"?"Switch to Light Mode":"Switch to Dark Mode";};
 $("export").onclick=()=>{const blob=new Blob([JSON.stringify({plan},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="bible-reading-progress.json";a.click();URL.revokeObjectURL(url);};
 $("import").onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{const text=await f.text();const data=JSON.parse(text);if(data.plan&&Array.isArray(data.plan)){plan=data.plan.map((p,i)=>({id:p.id??i+1,t:p.t||(/^(Matthew|Mark|Luke|John|Acts|Romans|1 Corinthians|2 Corinthians|Galatians|Ephesians|Philippians|Colossians|1 Thessalonians|2 Thessalonians|1 Timothy|2 Timothy|Titus|Philemon|Hebrews|James|1 Peter|2 Peter|1 John|2 John|3 John|Jude|Revelation)$/.test(p.book)?"NT":"OT"),book:p.book,chapter:p.chapter,passage:p.passage||p.book+" "+p.chapter,done:!!p.done}));save();render();}}catch(err){alert("Invalid file.");}finally{e.target.value="";}};
 $("reset").onclick=()=>{if(!confirm("Reset all checkboxes?"))return;for(const it of plan)it.done=false;save();render();};
-if(localStorage.getItem(PREF_MODE)==="dark"){document.body.dataset.mode="dark";$("toggleMode").textContent="Switch to Light Mode";}
+if(localStorage.getItem(PREF_MODE)==="dark"){$("toggleMode").textContent="Switch to Light Mode";}
 render();applyThemeChrome();
-if("serviceWorker"in navigator){window.addEventListener("load",async()=>{try{const reg=await navigator.serviceWorker.register("./sw-v7.js");if(reg.waiting)reg.waiting.postMessage({type:"SKIP_WAITING"});if(reg.installing){reg.installing.addEventListener("statechange",e=>{if(e.target.state==="installed")location.reload();});}let refreshing=false;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(refreshing)return;refreshing=true;location.reload();});}catch(_){}});}
+if("serviceWorker"in navigator){window.addEventListener("load",async()=>{try{const reg=await navigator.serviceWorker.register("./sw-v8.js");if(reg.waiting)reg.waiting.postMessage({type:"SKIP_WAITING"});if(reg.installing){reg.installing.addEventListener("statechange",e=>{if(e.target.state==="installed")location.reload();});}let refreshing=false;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(refreshing)return;refreshing=true;location.reload();});}catch(_){}});}
 </script>
 </body>
 </html>
